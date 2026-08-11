@@ -25,6 +25,7 @@ Hardware paths, package versions, and GNOME extension compatibility can differ o
 ### Surface hardware and authentication
 
 - [Disable a broken internal Surface keyboard](guides/disable-surface-keyboard.md) - Reversible input-device disabling and boot automation.
+- [Reliable hibernation for broken s2idle resume](guides/surface-s2idle-hibernation.md) - Diagnose failed Surface suspend, configure swap-file resume with dracut and GRUB, replace lid suspend, verify restoration, and roll back safely.
 - [Surface IR face authentication pilot](guides/howdy-surface-face-auth.md) - Sudo-only Howdy pilot with password fallback and emergency rollback.
 
 ### Media and file support
