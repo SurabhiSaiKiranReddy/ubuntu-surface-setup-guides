@@ -430,7 +430,7 @@ gsettings set org.gnome.settings-daemon.plugins.power \
   sleep-inactive-battery-type 'hibernate'
 
 gsettings set org.gnome.settings-daemon.plugins.power \
-  sleep-inactive-battery-timeout 900
+  sleep-inactive-battery-timeout 1800
 
 gsettings set org.gnome.settings-daemon.plugins.power \
   lid-close-ac-action 'hibernate'
@@ -442,7 +442,7 @@ gsettings set org.gnome.settings-daemon.plugins.power \
 This final policy means:
 
 - ordinary lid closure on AC or battery hibernates;
-- 15 minutes of inactivity on battery hibernates;
+- 30 minutes of inactivity on battery hibernates;
 - inactivity on AC does nothing; and
 - docked lid closure is ignored by logind.
 
