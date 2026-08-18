@@ -19,6 +19,7 @@ Hardware paths, package versions, and GNOME extension compatibility can differ o
 ### Display and desktop
 
 - [Picture-perfect application scaling](guides/surface-ubuntu-picture-perfect-scaling.md) - Calibrate GNOME, Chrome, VS Code, Firefox, Qt, and GTK applications while preserving native panel resolution.
+- [Developer typography in Ghostty and VS Code](guides/developer-typography-ghostty-vscode.md) - Install Fira Code Retina for one user and configure Ghostty, the VS Code editor, integrated terminal, and Copilot Chat code blocks with native settings and rollback steps.
 - [Electron and Chromium scaling](guides/electron-scaling-fix.md) - Focused launcher-based fixes for Electron and Chromium applications.
 - [GNOME dock, panel, and window effects](guides/gnome-dock-top-panel-customization.md) - Bottom dock, translucent styling, extensions, custom panel themes, verification, and rollback.
 

@@ -209,6 +209,8 @@ Then fully exit and reopen Chrome. The package launcher will become active again
 
 ## 3. Visual Studio Code at 1.125
 
+This section controls Electron application scaling, not the editor font family. The finalized Fira Code Retina settings for the editor, integrated terminal, Copilot Chat code blocks, and Ghostty are documented separately in [Developer Typography: Fira Code Retina in Ghostty and VS Code](developer-typography-ghostty-vscode.md).
+
 Copy both VS Code launchers so normal launches and `vscode://` links use the same scale:
 
 ```bash
