@@ -26,6 +26,7 @@ The final configuration intentionally retains:
 - `/etc/dracut.conf.d/40-hibernate.conf`;
 - `/etc/polkit-1/rules.d/10-enable-hibernate.rules`;
 - `/etc/systemd/logind.conf.d/90-surface-hibernate.conf`;
+- `/etc/chrony/conf.d/90-hibernate-clock.conf`;
 - `/boot/grub/grub.cfg.pre-hibernate`; and
 - `/boot/initrd.img-KERNEL-VERSION.pre-hibernate`.
 
@@ -551,6 +552,45 @@ If it still says `suspend`, reload logind:
 sudo systemctl reload systemd-logind.service
 ```
 
+### The clock remains wrong after hibernation
+
+A brief clock correction immediately after resume can be normal. On the tested Surface, however, Chrony detected an offset equal to the time spent hibernating and attempted to correct it gradually. The default Ubuntu directive, `makestep 1 3`, permits an immediate step only during Chrony's first three clock updates after startup. Because Chrony remains running across hibernation, the restored clock could remain hours behind.
+
+Confirm the condition before changing the policy:
+
+```bash
+timedatectl status
+chronyc tracking
+journalctl -b -u chrony.service --no-pager | tail -n 50
+```
+
+If NTP sources are healthy but `System time` reports a large offset after resume, allow Chrony to step offsets greater than one second throughout its service lifetime:
+
+```bash
+sudo tee /etc/chrony/conf.d/90-hibernate-clock.conf >/dev/null <<'EOF'
+# Surface hibernation can restore stale wall-clock time.
+# Allow chronyd to step offsets over one second after resume.
+makestep 1 -1
+EOF
+
+sudo chmod 0644 /etc/chrony/conf.d/90-hibernate-clock.conf
+sudo chronyd -p -f /etc/chrony/chrony.conf >/dev/null
+sudo chronyc makestep
+sudo systemctl restart chrony.service
+chronyc waitsync 30 0.1 1000 1
+```
+
+Verify that the system clock, RTC, and NTP state agree:
+
+```bash
+timedatectl status
+chronyc tracking
+```
+
+The tested result reported `System clock synchronized: yes`, `Leap status: Normal`, and a sub-millisecond system-time offset. The existing `rtcsync` directive subsequently updated the hardware RTC in UTC.
+
+This override permits a clock step after any large offset, not only after hibernation. A time step can affect application timers, logs, and active jobs. Use it only with trusted time sources; the tested configuration preferred Canonical's NTS-authenticated Ubuntu pools.
+
 ## Rollback
 
 ### Stop automatic hibernation but keep manual hibernation
@@ -585,10 +625,12 @@ First disable automatic hibernation as above. Then remove the local policy and b
 sudo rm -f \
   /etc/polkit-1/rules.d/10-enable-hibernate.rules \
   /etc/dracut.conf.d/40-hibernate.conf \
-  /etc/default/grub.d/40-hibernate.cfg
+  /etc/default/grub.d/40-hibernate.cfg \
+  /etc/chrony/conf.d/90-hibernate-clock.conf
 
 sudo dracut --force "/boot/initrd.img-$(uname -r)" "$(uname -r)"
 sudo update-grub
+sudo systemctl restart chrony.service
 systemctl reboot
 ```
 
